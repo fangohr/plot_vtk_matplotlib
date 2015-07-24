@@ -1,6 +1,6 @@
 # Plot VTK files using Matplotlib
 
-This library allows to easily plot VTK files, for example, from Fenics or any
+This library allows to easily plot VTK files, for example, from FEniCS or any
 other software, in two dimensions using Matplotlib. The VTK file can be based
 on an Unstructured or Structured grid, binary or XML.
 
@@ -17,7 +17,7 @@ plot of the vector field.
 The interpolation is performed in a square grid whose dimensions and spacing
 can be tuned. A complete tutorial with most of the capabilities of this library
 can be found in the `plot_vtk_matplotlib_tutorial.ipynb` IPython notebook.
-This library is mainly oriented to be used with Ipython notebooks since we do
+This library is mainly oriented to be used with IPython notebooks since we do
 not state `matplotlib.pyplot.show()` when generating the graphs, but it can be
 specified after the library function calls.
 
