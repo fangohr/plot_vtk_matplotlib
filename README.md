@@ -26,11 +26,17 @@ specified after the library function calls.
 
 # Installation
 
-Clone the repository and from it, as a root user, do
+Clone the repository, cd into the new directory and as a root user, do
 
     pip install .
 
 This will add `plot_vtk_matplotlib` to the Python libraries.
+
+Alternatively, use
+
+    sudo pip install git+https://github.com/fangohr/plot_vtk_matplotlib.git
+
+# Software prerequisites
 
 The library needs `matplotlib`, `scipy` and `vtk` to work. It is recommended
 to install the latest versions using `pip`.
@@ -38,3 +44,7 @@ to install the latest versions using `pip`.
 # License
 
 A BSD license statement can be found in the `license.txt` file. 
+
+# Authors
+
+David Cortes, Hans Fangohr, University of Southampton (2015)
