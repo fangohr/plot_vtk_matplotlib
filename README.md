@@ -16,13 +16,17 @@ Currently, there are two functions to plot the data: one to plot
 a colormap of the sliced data with an optional quiver plot on top
 or just a quiver plot of the vector field.
 
-The interpolation is performed in a square grid whose dimensions
-and spacing can be tuned.
+The interpolation is performed in a square grid whose dimensions and spacing
+can be tuned. A complete tutorial with most of the capabilities of this library
+can be found in the `plot_vtk_matplotlib_tutorial.ipynb` IPyhton notebook.
+This library is mainly oriented to be used with Ipython notebooks since we do
+not state `matplotlib.pyplot.show()` when generating the graphs, but it can be
+specified after the library function calls.
 
 
-![Quiver plot][vector_field.png]
+![Quiver plot](vector_field.png)
 
-# INSTALLATION
+# Installation
 
 Clone the repository and from it, as a root user, do
 
@@ -30,4 +34,6 @@ Clone the repository and from it, as a root user, do
 
 This will add `plot_vtk_matplotlib` to the Python libraries.
 
-  
+# License
+
+A BSD license statement can be found in the `license.txt` file. 
