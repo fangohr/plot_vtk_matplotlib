@@ -1,6 +1,15 @@
 """
 
-    FUTURE IDEAS::
+plot_vtk_matplotlib library for plotting VTK files in two dimensions
+using Matplotlib
+
+Authors: David Cortes, Hans Fangohr
+
+License: BSD, stated in the Github repository:
+    https://github.com/fangohr/plot_vtk_matplotlib
+
+
+FUTURE IDEAS::
 
     A 3D plot is also possible to do, but the plt.quiver() function
     is still under development, and handling thousands of vectors
@@ -22,8 +31,9 @@ import numpy as np
 
 import colorsys
 
-matplotlib.rcParams.update({'font.size': 22})  # This should be equivalent
-#                                               # in structure than before
+# We can change Matplotlib parameters as
+matplotlib.rcParams['font.size'] = 22
+# Or as
 matplotlib.rcParams.update({'xtick.labelsize': 16})
 matplotlib.rcParams.update({'ytick.labelsize': 16})
 
@@ -101,7 +111,10 @@ class plot_vtk_matplotlib():
 
         """
 
-        # Check the type of file to load it according ot it
+        # Check the type of file to load it according to its grid structure
+        # which was specified when calling the class These dictionary entries
+        # return the corresponding VTK Reader functions, so they can be easily
+        # called according to the class argument
         reader_type = {
             'XMLUnstructuredGrid': lambda: vtk.vtkXMLUnstructuredGridReader(),
             'XMLStructuredGrid': lambda: vtk.vtkXMLStructuredGridReader(),
@@ -240,6 +253,7 @@ class plot_vtk_matplotlib():
                  colorbar_label='',
                  quiver_type='raw_cmap',
                  quiver_color='k',
+                 pivot='middle',
                  nx_q=20,
                  ny_q=20,
                  frame=True,
@@ -355,6 +369,10 @@ class plot_vtk_matplotlib():
 
         quiver_color        :: Arrow color if one of the 'color' options was
                                specified in the quiver_type argument
+
+        pivot               :: By default we make the arrows to be drawn at the
+                               center of the grid nodes. This option is from
+                               the matplotlib quiver function
 
         nx_q, ny_q          :: Resolution in the x and y directions for the
                                arrows in the quiver plot if one of the
@@ -644,6 +662,7 @@ class plot_vtk_matplotlib():
                       # component of m_component
                       quiv[v_component],
                       cmap=quiver_map,
+                      pivot=pivot,
                       **quiver_args
                       )
         elif (quiver_type == 'interpolated_colour'
@@ -653,6 +672,7 @@ class plot_vtk_matplotlib():
                       quiv['vx'],
                       quiv['vy'],
                       color=quiver_color,
+                      pivot=pivot,
                       **quiver_args
                       )
         elif not quiver_type:
@@ -689,6 +709,7 @@ class plot_vtk_matplotlib():
                     interpolator='scipy',
                     quiver_type='raw_cmap',
                     quiver_color='k',
+                    pivot='middle',
                     linewidth=0.7,
                     x_min=-10, y_min=-10,
                     x_max=10, y_max=10,
@@ -756,6 +777,10 @@ r'$v_{'
 
         quiver_color        :: Arrow color if one of the 'color' options was
                                specified in the quiver_type argument
+
+        pivot               :: By default we make the arrows to be drawn at the
+                               center of the grid nodes. This option is from
+                               the matplotlib quiver function
 
         linewidth           :: Arrows line width
 
@@ -868,6 +893,7 @@ r'$v_{'
                       linewidth=linewidth,
                       edgecolor='k',
                       facecolor=None,
+                      pivot=pivot,
                       **kwargs
                       )
 
@@ -881,6 +907,7 @@ r'$v_{'
                       alpha=alpha,
                       linewidth=linewidth,
                       color=quiver_color,
+                      pivot=pivot,
                       **kwargs
                       )
 

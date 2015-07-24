@@ -32,6 +32,9 @@ Clone the repository and from it, as a root user, do
 
 This will add `plot_vtk_matplotlib` to the Python libraries.
 
+The library needs `matplotlib`, `scipy` and `vtk` to work. It is recommended
+to install the latest versions using `pip`.
+
 # License
 
 A BSD license statement can be found in the `license.txt` file. 
