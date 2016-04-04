@@ -876,6 +876,7 @@ r'$v_{'
         if not predefined_axis:
             f = plt.figure(figsize=figsize, frameon=frame)
             ax = f.add_subplot(111)
+
         else:
             ax = predefined_axis
 
@@ -911,15 +912,23 @@ r'$v_{'
                       **kwargs
                       )
 
-        plt.tight_layout()
+        # plt.tight_layout()
 
         if xlim:
             plt.xlim(xlim)
         if ylim:
             plt.ylim(ylim)
 
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
+        if x_label:
+            plt.xlabel(x_label)
+        if y_label:
+            plt.ylabel(y_label)
+
+        if not frame:
+            ax.axis('off')
+            # This can help to remove all whitespace:
+            # Get the figure extent and then use it in bbox_inches
+            # extent = plt.gca().get_window_extent().transformed(plt.gcf().dpi_scale_trans.inverted())
 
         if normalize_data:
             norm = matplotlib.colors.Normalize(vmin=-1, vmax=1)
@@ -947,6 +956,7 @@ r'$v_{'
 
         if savefig:
             plt.savefig(savefig, bbox_inches='tight')
+            # plt.savefig(savefig, bbox_inches=extent)
 
         # plt.show()
 
