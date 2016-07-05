@@ -611,7 +611,6 @@ class plot_vtk_matplotlib():
         # ---------------------------------------------------------------------
         # Now plot in matplotlib ----------------------------------------------
         # ---------------------------------------------------------------------
-        print(zi)
         # Use a predefined axis if possible
         if predefined_axis:
             ax = predefined_axis
