@@ -611,7 +611,7 @@ class plot_vtk_matplotlib():
         # ---------------------------------------------------------------------
         # Now plot in matplotlib ----------------------------------------------
         # ---------------------------------------------------------------------
-	print(zi)
+        print(zi)
         # Use a predefined axis if possible
         if predefined_axis:
             ax = predefined_axis
@@ -628,7 +628,7 @@ class plot_vtk_matplotlib():
             ax.imshow(zi, interpolation='None',
                       extent=[np.min(xi), np.max(xi),
                               np.min(yi), np.max(yi)],
-		      vmin=-1, vmax=1,
+                      vmin=-1, vmax=1,
                       origin='lower'
                       )
         if colorbar:
@@ -715,7 +715,7 @@ class plot_vtk_matplotlib():
         # Axes labels
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
-	    
+
         if savefig:
             plt.savefig(savefig, bbox_inches='tight')
 
