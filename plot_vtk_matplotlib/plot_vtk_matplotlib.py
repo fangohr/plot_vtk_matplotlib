@@ -25,7 +25,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 try:
     import scipy.interpolate
 except:
-    print 'Could not load python-scipy. Install it.'
+    print('Could not load python-scipy. Install it.')
 import numpy as np
 # import matplotlib.mlab as ml
 
@@ -254,7 +254,7 @@ class plot_vtk_matplotlib():
             return quivx, quivy, quivz, xi_q, yi_q
 
         except:
-            print 'Cannot interpolate vector field'
+            print('Cannot interpolate vector field')
             return
 
     def plot_vtk(self,
@@ -443,7 +443,7 @@ class plot_vtk_matplotlib():
             elif interpolator == 'natgrid':
                 interpolator_method = 'nn'
             else:
-                print 'Specify a valid interpolation method'
+                print('Specify a valid interpolation method')
                 return
 
         # The HSV interpolation is better with linear (cubic messes up things)
@@ -464,7 +464,7 @@ class plot_vtk_matplotlib():
         # the values)
         self.data_filter = (self.z_max > self.z) & (self.z > self.z_min)
         if len(np.where(self.data_filter == True)[0]) == 0:
-            print 'No data in specified range!'
+            print('No data in specified range!')
             return
 
         # Dictionary to use a specific vector component
@@ -515,7 +515,7 @@ class plot_vtk_matplotlib():
                                       )
                                      ).T
             else:
-                print 'Specify a dimension for the HSV mapping'
+                print('Specify a dimension for the HSV mapping')
                 return
 
             def convert_to_rgb(a):
@@ -525,7 +525,7 @@ class plot_vtk_matplotlib():
                                                     )
                                 )
 
-            hsv_array = np.array(map(convert_to_rgb, hsv_array))
+            hsv_array = np.array(list(map(convert_to_rgb, hsv_array)))
 
         # Extract the z_component of the vector field
         # (or m_component if specified) to do the colormap
@@ -611,7 +611,7 @@ class plot_vtk_matplotlib():
         # ---------------------------------------------------------------------
         # Now plot in matplotlib ----------------------------------------------
         # ---------------------------------------------------------------------
-
+	print(zi)
         # Use a predefined axis if possible
         if predefined_axis:
             ax = predefined_axis
@@ -621,16 +621,16 @@ class plot_vtk_matplotlib():
 
         if not hsv_map:
             # Plot the colour map with the interpolated values of v_i
-            ax.pcolormesh(xi, yi, zi, cmap=plt.get_cmap(cmap),
+            ax.pcolormesh(xi, yi, zi, cmap=plt.get_cmap(cmap), vmin=-1, vmax=1,
                           alpha=cmap_alpha)
         else:
             # Plot the colour map with the HSV colours
             ax.imshow(zi, interpolation='None',
                       extent=[np.min(xi), np.max(xi),
                               np.min(yi), np.max(yi)],
+		      vmin=-1, vmax=1,
                       origin='lower'
                       )
-
         if colorbar:
             if hsv_map:
                 cmap_cb = matplotlib.cm.get_cmap(name='hsv')
@@ -701,7 +701,7 @@ class plot_vtk_matplotlib():
         elif not quiver_type:
             pass
         else:
-            print 'Specify an option for the quiver plot'
+            print('Specify an option for the quiver plot')
             return
 
         if not frame:
@@ -715,7 +715,7 @@ class plot_vtk_matplotlib():
         # Axes labels
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
-
+	    
         if savefig:
             plt.savefig(savefig, bbox_inches='tight')
 
@@ -856,7 +856,7 @@ r'$v_{'
         # the values)
         self.data_filter = (self.z_max > self.z) & (self.z > self.z_min)
         if len(np.where(self.data_filter == True)[0]) == 0:
-            print 'No data in specified range!'
+            print('No data in specified range!')
             return
 
         # Leave only the components between the specified z_range
