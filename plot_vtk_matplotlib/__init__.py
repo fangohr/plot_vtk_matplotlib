@@ -1,1 +1,1 @@
-from plot_vtk_matplotlib import *
+from .plot_vtk_matplotlib import *

@@ -25,7 +25,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 try:
     import scipy.interpolate
 except:
-    print 'Could not load python-scipy. Install it.'
+    print('Could not load python-scipy. Install it.')
 import numpy as np
 # import matplotlib.mlab as ml
 
@@ -39,6 +39,7 @@ matplotlib.rcParams.update({'ytick.labelsize': 16})
 
 
 class plot_vtk_matplotlib():
+
     """
 
     Class to load and plot a VTK file (from Fenics or any other simulation
@@ -103,7 +104,7 @@ class plot_vtk_matplotlib():
         self.z_min = z_min
         self.vtkfiletype = vtkfiletype
 
-    def extract_data(self):
+    def extract_data(self, rotate=None):
         """
 
         Extract the data from the VTK file using the python-vtk library
@@ -115,12 +116,15 @@ class plot_vtk_matplotlib():
         # which was specified when calling the class These dictionary entries
         # return the corresponding VTK Reader functions, so they can be easily
         # called according to the class argument
+        #
+        # Rotate argument is a rotation in the x-y plane. To use, set rotate
+        # equal to an angle in radians.
         reader_type = {
             'XMLUnstructuredGrid': lambda: vtk.vtkXMLUnstructuredGridReader(),
             'XMLStructuredGrid': lambda: vtk.vtkXMLStructuredGridReader(),
             'UnstructuredGrid': lambda: vtk.vtkUnstructuredGridReader(),
             'StructuredGrid': lambda: vtk.vtkStructuredGridReader(),
-            }
+        }
 
         if self.vtkfiletype.startswith('XML'):
             # Load the vtk file from the input file
@@ -144,15 +148,30 @@ class plot_vtk_matplotlib():
 
         # Transform the coordinates of the nodes to a Numpy array and
         # save them to the corresponding class objects
-        nodes_numpy_array = vtk_to_numpy(nodes_vtk_array)
-        self.x, self.y, self.z = (nodes_numpy_array[:, 0],
-                                  nodes_numpy_array[:, 1],
-                                  nodes_numpy_array[:, 2]
-                                  )
+
+        nodes = vtk_to_numpy(nodes_vtk_array)
+        if rotate:
+            self.x = nodes[:, 0]*np.cos(rotate) - nodes[:, 1]*np.sin(rotate)
+            self.y = nodes[:, 0]*np.sin(rotate) + nodes[:, 1]*np.cos(rotate)
+            self.z = nodes[:, 2]
+        else:
+            self.x, self.y, self.z = (nodes[:, 0],
+                                      nodes[:, 1],
+                                      nodes[:, 2]
+                                      )
 
         # Transform the magnetisation data to a Numpy array and save
-        vf_numpy_array = vtk_to_numpy(vf_vtk_array)
-        self.vf = vf_numpy_array
+        if rotate:
+            vf = vtk_to_numpy(vf_vtk_array)
+            vfx = vf[:, 0]*np.cos(rotate) - vf[:, 1]*np.sin(rotate)
+            vfy = vf[:, 0]*np.sin(rotate) + vf[:, 1]*np.cos(rotate)
+            vfz = vf[:, 2]
+            self.vf = np.zeros_like(vf)
+            self.vf[:, 0] = vfx
+            self.vf[:, 1] = vfy
+            self.vf[:, 2] = vfz
+        else:
+            self.vf = vtk_to_numpy(vf_vtk_array)
 
     def interpolate_field(self,
                           x, y,
@@ -191,7 +210,7 @@ class plot_vtk_matplotlib():
                     (xi_q, yi_q),
                     method='linear',
                     fill_value=np.nan
-                    )
+                )
 
                 quivy = scipy.interpolate.griddata(
                     (x, y),
@@ -199,7 +218,7 @@ class plot_vtk_matplotlib():
                     (xi_q, yi_q),
                     method='linear',
                     fill_value=np.nan
-                    )
+                )
 
                 quivz = scipy.interpolate.griddata(
                     (x, y),
@@ -207,24 +226,27 @@ class plot_vtk_matplotlib():
                     (xi_q, yi_q),
                     method='linear',
                     fill_value=np.nan
-                    )
+                )
 
             # With natgrid we don't need to mask the values
             elif interpolator == 'natgrid':
                 quivx = matplotlib.mlab.griddata(x, y,
-                                                 self.vf[:, 0][self.data_filter],
+                                                 self.vf[:, 0][
+                                                     self.data_filter],
                                                  xi_q, yi_q,
                                                  interp=interpolator_method
                                                  )
 
                 quivy = matplotlib.mlab.griddata(x, y,
-                                                 self.vf[:, 1][self.data_filter],
+                                                 self.vf[:, 1][
+                                                     self.data_filter],
                                                  xi_q, yi_q,
                                                  interp=interpolator_method
                                                  )
 
                 quivz = matplotlib.mlab.griddata(x, y,
-                                                 self.vf[:, 2][self.data_filter],
+                                                 self.vf[:, 2][
+                                                     self.data_filter],
                                                  xi_q, yi_q,
                                                  interp=interpolator_method
                                                  )
@@ -232,7 +254,7 @@ class plot_vtk_matplotlib():
             return quivx, quivy, quivz, xi_q, yi_q
 
         except:
-            print 'Cannot interpolate vector field'
+            print('Cannot interpolate vector field')
             return
 
     def plot_vtk(self,
@@ -421,7 +443,7 @@ class plot_vtk_matplotlib():
             elif interpolator == 'natgrid':
                 interpolator_method = 'nn'
             else:
-                print 'Specify a valid interpolation method'
+                print('Specify a valid interpolation method')
                 return
 
         # The HSV interpolation is better with linear (cubic messes up things)
@@ -442,7 +464,7 @@ class plot_vtk_matplotlib():
         # the values)
         self.data_filter = (self.z_max > self.z) & (self.z > self.z_min)
         if len(np.where(self.data_filter == True)[0]) == 0:
-            print 'No data in specified range!'
+            print('No data in specified range!')
             return
 
         # Dictionary to use a specific vector component
@@ -493,7 +515,7 @@ class plot_vtk_matplotlib():
                                       )
                                      ).T
             else:
-                print 'Specify a dimension for the HSV mapping'
+                print('Specify a dimension for the HSV mapping')
                 return
 
             def convert_to_rgb(a):
@@ -503,7 +525,7 @@ class plot_vtk_matplotlib():
                                                     )
                                 )
 
-            hsv_array = np.array(map(convert_to_rgb, hsv_array))
+            hsv_array = np.array(list(map(convert_to_rgb, hsv_array)))
 
         # Extract the z_component of the vector field
         # (or m_component if specified) to do the colormap
@@ -517,7 +539,8 @@ class plot_vtk_matplotlib():
                     # from the git folder
 
                     zi = matplotlib.mlab.griddata(x, y,
-                                                  self.vf[:, comp[v_component]][self.data_filter],
+                                                  self.vf[:, comp[v_component]][
+                                                      self.data_filter],
                                                   xi, yi,
                                                   interp=interpolator_method)
 
@@ -530,11 +553,11 @@ class plot_vtk_matplotlib():
 
                     xi, yi = np.meshgrid(xi, yi)
 
-
                     # The method can be changed, but the 'nearest' is not
                     # working well with the values outside the simulation mesh
                     zi = scipy.interpolate.griddata((x, y),
-                                                    self.vf[:, comp[v_component]][self.data_filter],
+                                                    self.vf[:, comp[v_component]][
+                                                        self.data_filter],
                                                     (xi, yi),
                                                     method=interpolator_method
                                                     )
@@ -544,15 +567,15 @@ class plot_vtk_matplotlib():
                 zi = np.ma.masked_where(np.isnan(zi), zi)
 
             except Exception('Interpolation Error'):
-                print ('An error ocurred while interpolating the data. '
-                       'One of the possible reasosn is that '
-                       'matplotlib.mlab.griddata may need the natgrid '
-                       'complement in case matplotlib was '
-                       'installed with pip. You can get natgrid by doing \n'
-                       'git clone https://github.com/matplotlib/natgrid.git \n'
-                       'and then: \n sudo pip install . \n'
-                       'from the git folder'
-                       )
+                print('An error ocurred while interpolating the data. '
+                      'One of the possible reasosn is that '
+                      'matplotlib.mlab.griddata may need the natgrid '
+                      'complement in case matplotlib was '
+                      'installed with pip. You can get natgrid by doing \n'
+                      'git clone https://github.com/matplotlib/natgrid.git \n'
+                      'and then: \n sudo pip install . \n'
+                      'from the git folder'
+                      )
                 return
 
         # Otherwise, use the HSV colour map for the vector field
@@ -588,7 +611,6 @@ class plot_vtk_matplotlib():
         # ---------------------------------------------------------------------
         # Now plot in matplotlib ----------------------------------------------
         # ---------------------------------------------------------------------
-
         # Use a predefined axis if possible
         if predefined_axis:
             ax = predefined_axis
@@ -598,16 +620,16 @@ class plot_vtk_matplotlib():
 
         if not hsv_map:
             # Plot the colour map with the interpolated values of v_i
-            ax.pcolormesh(xi, yi, zi, cmap=plt.get_cmap(cmap),
+            ax.pcolormesh(xi, yi, zi, cmap=plt.get_cmap(cmap), vmin=-1, vmax=1,
                           alpha=cmap_alpha)
         else:
             # Plot the colour map with the HSV colours
             ax.imshow(zi, interpolation='None',
                       extent=[np.min(xi), np.max(xi),
                               np.min(yi), np.max(yi)],
+                      vmin=-1, vmax=1,
                       origin='lower'
                       )
-
         if colorbar:
             if hsv_map:
                 cmap_cb = matplotlib.cm.get_cmap(name='hsv')
@@ -678,7 +700,7 @@ class plot_vtk_matplotlib():
         elif not quiver_type:
             pass
         else:
-            print 'Specify an option for the quiver plot'
+            print('Specify an option for the quiver plot')
             return
 
         if not frame:
@@ -833,7 +855,7 @@ r'$v_{'
         # the values)
         self.data_filter = (self.z_max > self.z) & (self.z > self.z_min)
         if len(np.where(self.data_filter == True)[0]) == 0:
-            print 'No data in specified range!'
+            print('No data in specified range!')
             return
 
         # Leave only the components between the specified z_range
@@ -959,4 +981,3 @@ r'$v_{'
             # plt.savefig(savefig, bbox_inches=extent)
 
         # plt.show()
-
